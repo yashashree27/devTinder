@@ -3,14 +3,18 @@ const express = require('express');
 const app = express();
 
 app.use("/test",(req, res) => {
-    res.send('Test from express server');     // request handler
+    res.send('Test from express server test');     // request handler
 });
 
-app.use('/home', (req, res) => {
-    res.send('This is home tab')
+app.get("/user", (req, res) => {
+    res.send({firstName:"Yash", lastName:"Marghade"});
 });
 
-app.listen(3000, ()=> {
-    console.log('Server listening on port 3000...');
+app.post("/user", (req, res) => {
+    res.send("saved to database")
+})
+
+app.listen(4000, ()=> {
+    console.log('Server listening on port 4000...');
     
 });
