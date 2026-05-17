@@ -15,7 +15,7 @@ app.post('/signup', async (req, res)=> {
     res.send('user created successfully');
   }
   catch (err){
-    res.status(400).send('Error occured while adding user')
+    res.status(500).send('Error occured while adding user'+ err.message)
   }
 });
 
@@ -77,10 +77,10 @@ app.patch('/user', async (req, res)=> {
   const Id = req.body.userId;
   const data = req.body
   try {
-      const updatedUser = await User.findByIdAndUpdate(Id, data, {returnDocument: "after"});
+      const updatedUser = await User.findByIdAndUpdate(Id, data, {returnDocument: "after",  runValidators: true });
       res.send('upadted user successfully', updatedUser)
   } catch(err){
-     res.status(500).send('something went wrong')
+     res.status(500).send(err.message)
   }
 });
 
