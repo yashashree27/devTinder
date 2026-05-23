@@ -3,7 +3,7 @@ const adminAuth = (req,res, next)=> {
     const token = 'xyz';
     const isAuthorized = token ==='xyz';
     if(!isAuthorized){
-        res.status(401).send('unauthorized');
+       return res.status(401).send('unauthorized');
     }else {
         next();
     }
@@ -15,7 +15,7 @@ const authUser = (req, res, next) => {
  const token = "sdff";
  const isAuthorized = token ==='sdff';
  if(!isAuthorized){
-    res.status(401).send('unauthorized');
+    return res.status(401).send('unauthorized');
  } else{
     next();
  }
