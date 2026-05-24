@@ -3,10 +3,11 @@ const connectDB = require('./config/database');
 const app = express();
 const { User } = require('./models/user');
 const { validateSignup } = require('./utils/validator');
-const bcrypt = require('bcrypt');
-
+const cookieParser = require('cookie-parser');
+const { authUser } = require('./middlewares/auth')
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.post('/signup', async (req, res)=> {
 
@@ -45,15 +46,35 @@ app.post( '/login', async(req, res)=> {
     throw new Error("Invalid Credential")
   }
 
-  const isPasswordCorrect = await bcrypt.compare(password, user.password);
+  const isPasswordCorrect = await user.validatePassword(password)
 
   if (isPasswordCorrect){
-   res.send("User logged in succesfully")
-  }else {
+
+    // craete josn web token 
+    const token = await user.getJWT();
+
+    // storing token in cookie
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 1000 * 60 * 60 ) // 1hr
+    });
+    res.send("User logged in succesfully")
+  } else {
     throw new Error("Invalid creds")}
   }
   catch (err){
     res.status(500).send("Error: "+ err.message);
+  }
+})
+
+
+app.get('/profile', authUser, async (req, res)=> {
+
+  try{
+  const user = req.user;
+   res.send(user)
+
+  }catch (err){
+   res.status(500).send("Error"+ err.message)
   }
 })
 
