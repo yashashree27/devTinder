@@ -1,82 +1,22 @@
 const express = require('express');
 const connectDB = require('./config/database');
 const app = express();
+
 const { User } = require('./models/user');
-const { validateSignup } = require('./utils/validator');
 const cookieParser = require('cookie-parser');
-const { authUser } = require('./middlewares/auth')
 
 app.use(express.json());
 app.use(cookieParser());
 
-app.post('/signup', async (req, res)=> {
 
-  try {
+const authRouter = require('./routes/auth');
+const profileRouter = require('./routes/profile');
+const connectionRouter = require('./routes/connection');
 
-  validateSignup(req)
+app.use('/', authRouter);
+app.use('/', profileRouter);
+app.use('/', connectionRouter);
 
-  const { firstName, lastName, emailId, password } = req.body;
-
-  const passwordHashed = await bcrypt.hash(req.body.password, 10);
-
-  // Creating new instace of the User model
-  const user = new User({
-    firstName,
-    lastName,
-    emailId,
-    password: passwordHashed
-  });
-
-    await user.save();
-    res.send('user created successfully');
-  }
-  catch (err){
-    res.status(500).send('Error occured while adding user'+ err.message)
-  }
-});
-
-
-app.post( '/login', async(req, res)=> {
-  try {
-
-  const {emailId, password} = req.body;
-  const user = await User.findOne({emailId : emailId});
-
-  if(!user){
-    throw new Error("Invalid Credential")
-  }
-
-  const isPasswordCorrect = await user.validatePassword(password)
-
-  if (isPasswordCorrect){
-
-    // craete josn web token 
-    const token = await user.getJWT();
-
-    // storing token in cookie
-    res.cookie("token", token, {
-      expires: new Date(Date.now() + 1000 * 60 * 60 ) // 1hr
-    });
-    res.send("User logged in succesfully")
-  } else {
-    throw new Error("Invalid creds")}
-  }
-  catch (err){
-    res.status(500).send("Error: "+ err.message);
-  }
-})
-
-
-app.get('/profile', authUser, async (req, res)=> {
-
-  try{
-  const user = req.user;
-   res.send(user)
-
-  }catch (err){
-   res.status(500).send("Error"+ err.message)
-  }
-})
 
 // Get singl user
 app.get('/user', async (req, res)=> {
@@ -170,7 +110,8 @@ app.patch('/user/email', async (req, res) => {
   }
 })
 
-connectDB().then(()=> {
+connectDB()
+.then(()=> {
   console.log('Connection to database established succesfully');
   app.listen(4000,()=> {
     console.log('Server listening on port 4000...');
