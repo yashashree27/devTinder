@@ -15,11 +15,11 @@ PATCH /profile/user/password
 
 ## connectionRequest
 
-POST /connection/user/send/:userName
-POST /connection/user/markIntrested/:userId
-POST /connection/user/markIgnored/:userId
-POST /conenction/user/accept/:userId
-POST /conention/user/reject/:userId
+
+POST /request/send/markIntrested/:userId
+POST /request/send/markIgnored/:userId
+POST /request/review/accept/:userId
+POST /request/review/reject/:userId
 
 ## feed
 GET /feed/view
