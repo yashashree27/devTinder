@@ -16,13 +16,15 @@ PATCH /profile/user/password
 ## connectionRequest
 
 
-POST /request/send/markIntrested/:userId
-POST /request/send/markIgnored/:userId
-POST /request/review/accept/:userId
-POST /request/review/reject/:userId
+POST /request/send/:status/:userId
 
-## feed
-GET /feed/view
+POST /request/review/:status/:requestId
+
+
+## feed of logged in user
+GET /user/receive/pendingRequest
+GET /user/connections
+
 
 
 

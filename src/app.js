@@ -12,10 +12,14 @@ app.use(cookieParser());
 const authRouter = require('./routes/auth');
 const profileRouter = require('./routes/profile');
 const connectionRouter = require('./routes/connection');
+const requestRouter = require('./routes/request');
+const userRouter = require('./routes/user');
 
 app.use('/', authRouter);
 app.use('/', profileRouter);
 app.use('/', connectionRouter);
+app.use('/', requestRouter);
+app.use('/', userRouter);
 
 
 // Get singl user
@@ -72,30 +76,7 @@ app.delete('/user', async (req, res) => {
 });
 
 
-app.patch('/user/:userId', async (req, res) => {
-  const Id = req.params?.userId;
-  const data = req.body
-  try {
 
-    const ALLOWED_UPDATES = [
-      'userId',
-      'age',
-      'photoUrl',
-      'about',
-      'gender',
-      'skills'
-    ];
-
-    const isUpdateAllowed = Object.keys(data).every((k) => ALLOWED_UPDATES.includes(k));
-    if (!isUpdateAllowed) {
-      throw new Error('Upadte not allowed');
-    }
-    const updatedUser = await User.findByIdAndUpdate(Id, data, { returnDocument: "after", runValidators: true });
-    res.send('updated user successfully', updatedUser)
-  } catch(err){
-    res.status(500).send(err.message)
-  }
-});
 
 
 app.patch('/user/email', async (req, res) => {

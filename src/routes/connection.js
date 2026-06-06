@@ -5,13 +5,6 @@ const { ConnectionRequestModel } = require('../models/connectionRequest');
 const { User } = require('../models/user');
 
 
-connectionRouter.post("/sendConnectionRequest", authUser, async (req, res) => {
-    const user = req.user;
-
-    console.log("sending req");
-    res.send(user.firstName + "sent the connection req");
-});
-
 
 connectionRouter.post("/sendConnectionRequest/:status/:toUserId", authUser, async (req, res) => {
 
@@ -21,8 +14,8 @@ connectionRouter.post("/sendConnectionRequest/:status/:toUserId", authUser, asyn
         const toUserId = req.params?.toUserId;
         const status = req.params?.status
 
-        const AllowedStatus = ["Interested", "Ignored", "Accepted", "Rejected"];
-        if(!AllowedStatus.includes(status)){
+        const allowedStatus = ["Interested", "Ignored"];
+        if(!allowedStatus.includes(status)){
             return res.status(400).send("Status is not valid")
         }
 
