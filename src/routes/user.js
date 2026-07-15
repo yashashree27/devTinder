@@ -1,6 +1,7 @@
 const express = require("express");
 const { authUser } = require("../middlewares/auth");
 const { ConnectionRequestModel } = require("../models/connectionRequest");
+const { User } = require("../models/user");
 const userRouter = express.Router();
 
 //Get all pending connection req for loggedin user
@@ -62,5 +63,64 @@ userRouter.get('/user/connections', authUser, async(req, res) => {
     res.status(400).send({message: err.message})
   }
 })
+
+
+// feed api
+
+// 1) should not see their own profile
+// 2) should not see profile of users to whom they have sent request and received req
+//3) ignored people
+
+userRouter.get('/feed', authUser, async(req, res) => {
+try {
+const loggedInUser = req.user;
+
+const page = parseInt(req.query.page) || 1;
+let limit = parseInt(req.query.limit) || 10;
+limit = limit > 50 ? 50 : limit;
+
+const skip = (page -1) * limit ;
+
+//find all connection request
+const connectionRequest = await ConnectionRequestModel.find({
+  $or: [
+    {fromUserId:loggedInUser._id}, {toUserId: loggedInUser._id}]
+}).select('fromUserId toUserId');
+
+
+const hidefromFeed = new Set();
+
+connectionRequest.forEach((req) =>{
+  hidefromFeed.add(req.fromUserId.toString());
+  hidefromFeed.add(req.toUserId.toString());
+});
+
+
+const users = await User.find({
+  $and: [
+    { _id: {$ne: loggedInUser._id}},
+    {_id: {$nin: Array.from(hidefromFeed)}}
+  ],
+})
+.select('firstName lastName emailId photoUrl skills')
+.skip(skip)
+.limit(limit);
+
+res.json({data: users});
+}catch(err){
+  res.status(400).json({messag:  err.message})
+}
+
+});
+
+
+
+
+
+
+
+
+
+
 
 module.exports = userRouter;
