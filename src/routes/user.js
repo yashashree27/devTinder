@@ -102,7 +102,7 @@ const users = await User.find({
     {_id: {$nin: Array.from(hidefromFeed)}}
   ],
 })
-.select('firstName lastName emailId photoUrl skills')
+.select('firstName lastName emailId photoUrl skills about gender age')
 .skip(skip)
 .limit(limit);
 

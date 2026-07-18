@@ -13,7 +13,7 @@ authRouter.post('/signup', async(req, res)=> {
 
   validateSignup(req)
 
-  const { firstName, lastName, emailId, password } = req.body;
+  const { firstName, lastName, emailId, password, age, gender, skills } = req.body;
 
   const passwordHashed = await bcrypt.hash(req.body.password, 10);
 
@@ -22,7 +22,10 @@ authRouter.post('/signup', async(req, res)=> {
     firstName,
     lastName,
     emailId,
-    password: passwordHashed
+    password: passwordHashed,
+    age,
+    gender,
+    skills
   });
 
     await user.save();
@@ -60,7 +63,7 @@ authRouter.post( '/login', async(req, res)=> {
     throw new Error("Invalid creds")}
   }
   catch (err){
-    res.status(500).send("Error: "+ err.message);
+    res.status(400).send("ERROR : " + err.message);
   }
 })
 
