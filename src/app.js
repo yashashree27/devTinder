@@ -2,6 +2,7 @@ const express = require('express');
 const connectDB = require('./config/database');
 const cors = require('cors');
 const app = express();
+require('dotenv').config()
 
 const { User } = require('./models/user');
 const cookieParser = require('cookie-parser');
@@ -101,7 +102,7 @@ app.patch('/user/email', async (req, res) => {
 connectDB()
 .then(()=> {
   console.log('Connection to database established succesfully');
-  app.listen(4000,()=> {
+  app.listen(process.env.PORT,()=> {
     console.log('Server listening on port 4000...');
   })
 })

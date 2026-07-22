@@ -3,8 +3,7 @@ const { authUser } = require('../middlewares/auth');
 const connectionRouter = express.Router();
 const { ConnectionRequestModel } = require('../models/connectionRequest');
 const { User } = require('../models/user');
-
-
+const sendEmail = require('../utils/sendEmail')
 
 connectionRouter.post("/sendConnectionRequest/:status/:toUserId", authUser, async (req, res) => {
 
@@ -15,27 +14,27 @@ connectionRouter.post("/sendConnectionRequest/:status/:toUserId", authUser, asyn
         const status = req.params?.status
 
         const allowedStatus = ["Interested", "Ignored"];
-        if(!allowedStatus.includes(status)){
+        if (!allowedStatus.includes(status)) {
             return res.status(400).send("Status is not valid")
         }
 
-        const existingUser= await User.findById(toUserId);
-        if(!existingUser){
+        const existingUser = await User.findById(toUserId);
+        if (!existingUser) {
             return res.status(400).send('User does not exist');
         }
 
         const connectionRequestExist = await ConnectionRequestModel.findOne({
             $or: [
-                {fromUserId, toUserId},
-                {fromUserId: toUserId, toUserId:fromUserId}
+                { fromUserId, toUserId },
+                { fromUserId: toUserId, toUserId: fromUserId }
             ],
 
         })
 
-        if(connectionRequestExist){
-             return res.status(400).send("Connection Request already exist")
+        if (connectionRequestExist) {
+            return res.status(400).send("Connection Request already exist")
         }
-            
+
         const connectionRequest = new ConnectionRequestModel({
             fromUserId: fromUserId,
             toUserId: toUserId,
@@ -43,8 +42,13 @@ connectionRouter.post("/sendConnectionRequest/:status/:toUserId", authUser, asyn
         })
 
         await connectionRequest.save();
+        const resEmail = await sendEmail.run(
+            "New Connection Request",
+            `${req.user.firstName} has sent you a connection request on DevTinder.`
+        );
+
         res.json({
-            message: `${req.user.firstName} is ${status}  ${existingUser.firstName}` ,
+            message: `${req.user.firstName} is ${status}  ${existingUser.firstName}`,
             data: connectionRequest
         })
 

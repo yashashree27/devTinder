@@ -13,7 +13,7 @@ const authUser = async (req, res, next) => {
          return res.status(401).send("Please Login")
       }
 
-      const decodeMessage = await jwt.verify(token, "DEVTINDER123")
+      const decodeMessage = await jwt.verify(token, process.env.JWT_SECRET)
 
       const { _id } = decodeMessage;
 
