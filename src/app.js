@@ -2,7 +2,10 @@ const express = require('express');
 const connectDB = require('./config/database');
 const cors = require('cors');
 const app = express();
-require('dotenv').config()
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV || "development"}`
+});
+require("./utils/cronJob");
 
 const { User } = require('./models/user');
 const cookieParser = require('cookie-parser');
