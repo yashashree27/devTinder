@@ -42,7 +42,6 @@ paymentRouter.post('/payment/createOrder', authUser, async (req, res) => {
 
         //3) save order deatils in database
         const savedPayment = await payment.save();
-        console.log("ordersaved", savedPayment);
         
         res.json({ ...savedPayment.toJSON(), keyId: process.env.RAZORPAY_KEY_ID })
 
@@ -63,11 +62,8 @@ paymentRouter.post('/payment/createOrder', authUser, async (req, res) => {
 // #webhook_body should be raw webhook request body
 paymentRouter.post('/payment/webhook', async (req, res) => {
     try {
-
-        console.log("webhook called");
         
-
-        const webhookSignature = req.headers(X - Razorpay - Signature) // OR  const webhookSignature = req.get[X-Razorpay-Signature]
+        const webhookSignature = req.headers[X-Razorpay-Signature] // OR  const webhookSignature = req.get[X-Razorpay-Signature]
         console.log("webhookSignature", webhookSignature);
         
 
@@ -84,14 +80,14 @@ paymentRouter.post('/payment/webhook', async (req, res) => {
 
         const user = await User.findOne({ _id: payment.userId });
         user.isPremium = true;
-        user.membershipType = payment.notes.membershipType;
+        user.membershipType = payment.notes.membership;
         await user.save();
 
         res.status(200).json({msg:"Webhook received successfuly"})
 
     } catch (err) {
-
-    }
+    return res.status(500).json({ msg: err.message });
+  }
 })
 
 module.exports = paymentRouter;
