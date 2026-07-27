@@ -63,6 +63,7 @@ paymentRouter.post('/payment/createOrder', authUser, async (req, res) => {
 paymentRouter.post('/payment/webhook', async (req, res) => {
     try {
         console.log("wenbook called");
+        console.log(req.headers);
         
         const webhookSignature = req.headers["X-Razorpay-Signature"] // OR  const webhookSignature = req.get[X-Razorpay-Signature]
         console.log("webhookSignature", webhookSignature);
