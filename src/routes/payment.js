@@ -80,6 +80,8 @@ paymentRouter.post('/payment/webhook', async (req, res) => {
         user.membershipType = payment.notes.membershipType;
         await user.save();
 
+        res.status(200).json({msg:"Webhook received successfuly"})
+
     } catch (err) {
 
     }
