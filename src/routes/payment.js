@@ -27,7 +27,7 @@ paymentRouter.post('/payment/createOrder', authUser, async (req, res) => {
             }
         })
 
-
+       console.log(order);
         // 2) Create a Payment document with the order details
         const payment = new Payment({
             userId: req.user._id,
@@ -42,6 +42,8 @@ paymentRouter.post('/payment/createOrder', authUser, async (req, res) => {
 
         //3) save order deatils in database
         const savedPayment = await payment.save();
+        console.log("ordersaved", savedPayment);
+        
         res.json({ ...savedPayment.toJSON(), keyId: process.env.RAZORPAY_KEY_ID })
 
     } catch (err) {
@@ -65,7 +67,7 @@ paymentRouter.post('/payment/webhook', async (req, res) => {
         console.log("webhook called");
         
 
-        const webhookSignature = req.headers[X - Razorpay - Signature] // OR  const webhookSignature = req.get[X-Razorpay-Signature]
+        const webhookSignature = req.headers(X - Razorpay - Signature) // OR  const webhookSignature = req.get[X-Razorpay-Signature]
         console.log("webhookSignature", webhookSignature);
         
 
