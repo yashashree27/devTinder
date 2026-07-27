@@ -3,7 +3,6 @@ const { subDays, startOfDay, endOfDay } = require("date-fns");
 const { ConnectionRequestModel } = require('../models/connectionRequest');
 const sendEmail = require('./sendEmail');
 
-console.log("Cron file loaded");
 
 cron.schedule(' 0 8 * * *', async () => {
 

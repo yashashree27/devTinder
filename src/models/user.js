@@ -68,7 +68,14 @@ const userSchema = new Schema({
                 throw new Error("Skills cannnot eb more than 4")
             }
         }
-    }
+    },
+    'isPremium': {
+        type: Boolean,
+        default: false,
+    },
+    'membershipType' : {
+        type: String,
+    },
 },
  {
     timestamps: true
